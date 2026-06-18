@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import '../../../core/theme/app_theme.dart';
 import 'chat_provider.dart';
 import '../domain/chat_message.dart';
@@ -110,11 +111,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     )
                   : MarkdownBody(
                       data: message.text,
+                      extensionSet: md.ExtensionSet.gitHubFlavored,
+                      inlineSyntaxes: [HighlightSyntax()],
                       styleSheet: MarkdownStyleSheet(
                         p: const TextStyle(color: AppTheme.textDark, fontSize: 16, height: 1.5),
                         strong: const TextStyle(color: AppTheme.textDark, fontWeight: FontWeight.bold),
                         em: const TextStyle(color: AppTheme.textDark, fontStyle: FontStyle.italic),
                         listBullet: const TextStyle(color: AppTheme.darkPastelPink),
+                        del: TextStyle(
+                          backgroundColor: Colors.yellow.withAlpha(150),
+                          color: AppTheme.textDark,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.none,
+                        ),
                       ),
                     ),
             ),
@@ -303,5 +312,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         },
       ),
     );
+  }
+}
+
+class HighlightSyntax extends md.InlineSyntax {
+  HighlightSyntax() : super(r'==([^=]+)==');
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final element = md.Element.text('del', match[1]!);
+    parser.addNode(element);
+    return true;
   }
 }

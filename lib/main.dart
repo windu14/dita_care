@@ -21,7 +21,7 @@ void main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  // System UI Mode is removed to allow solid white navigation bar
 
   try {
     // Load environment variables

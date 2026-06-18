@@ -89,6 +89,7 @@ class HomeScreen extends StatelessWidget {
                         image: const DecorationImage(
                           image: AssetImage('assets/images/hero_illustration.png'),
                           fit: BoxFit.cover,
+                          alignment: Alignment.bottomCenter,
                         ),
                         boxShadow: [
                           BoxShadow(
