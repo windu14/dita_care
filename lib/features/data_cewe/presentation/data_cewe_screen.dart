@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../core/theme/app_theme.dart';
 import 'data_cewe_provider.dart';
 
@@ -216,49 +217,53 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
             border: Border.all(color: const Color(0xFFE0E0E0)),
           ),
           padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 150,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withAlpha(50),
-                      borderRadius: BorderRadius.circular(10),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 150,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: 60,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: AppTheme.darkPastelGreen.withAlpha(30),
-                      borderRadius: BorderRadius.circular(10),
+                    Container(
+                      width: 60,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  width: double.infinity,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(7),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withAlpha(50),
-                  borderRadius: BorderRadius.circular(7),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 200,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withAlpha(50),
-                  borderRadius: BorderRadius.circular(7),
+                const SizedBox(height: 8),
+                Container(
+                  width: 200,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

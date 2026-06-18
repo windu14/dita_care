@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../core/theme/app_theme.dart';
 import '../data/supabase_service.dart';
 
@@ -404,58 +405,62 @@ class _ArticlesScreenState extends ConsumerState<ArticlesScreen> {
                 border: Border.all(color: const Color(0xFFE0E0E0)),
               ),
               padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 250,
-                    height: 18,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withAlpha(50),
-                      borderRadius: BorderRadius.circular(9),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    width: double.infinity,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withAlpha(50),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    width: double.infinity,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withAlpha(50),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withAlpha(50),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+              child: Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 250,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(9),
                       ),
-                      Container(
-                        width: 60,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withAlpha(50),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        Container(
+                          width: 60,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           },

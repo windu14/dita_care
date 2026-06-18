@@ -13,8 +13,8 @@ void main() async {
   // Edge-to-Edge System UI
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarDividerColor: Colors.white,
       systemNavigationBarContrastEnforced: false,
       systemNavigationBarIconBrightness: Brightness.dark,
       statusBarColor: Colors.transparent,
