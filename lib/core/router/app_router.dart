@@ -7,6 +7,7 @@ import '../../features/articles/presentation/articles_screen.dart';
 import '../../features/articles/presentation/article_detail_screen.dart';
 import '../../features/data_cewe/presentation/data_cewe_screen.dart';
 import '../../features/data_cewe/presentation/form_data_cewe_screen.dart';
+import '../../features/data_cewe/presentation/detail_data_cewe_screen.dart';
 
 import '../presentation/main_scaffold.dart';
 import '../presentation/splash_screen.dart';
@@ -70,6 +71,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'form',
                     builder: (context, state) => const FormDataCeweScreen(),
+                  ),
+                  GoRoute(
+                    path: 'detail',
+                    builder: (context, state) {
+                      final item = state.extra as Map<String, dynamic>;
+                      return DetailDataCeweScreen(item: item);
+                    },
                   ),
                 ],
               ),

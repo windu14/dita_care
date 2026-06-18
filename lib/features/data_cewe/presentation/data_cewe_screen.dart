@@ -460,71 +460,76 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
   }
 
   Widget _buildDataCard(Map<String, dynamic> item, {bool isStacked = false}) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-        boxShadow: isStacked ? [
-          BoxShadow(
-            color: Colors.black.withAlpha(15),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
-          )
-        ] : null,
-      ),
-      child: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item['title'] ?? '',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textDark,
-                        ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppTheme.darkPastelGreen.withAlpha(30),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    item['category'] ?? '',
-                    style: const TextStyle(
-                      color: AppTheme.darkPastelGreen,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        context.push('/data-cewe/detail', extra: item);
+      },
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+          boxShadow: isStacked ? [
+            BoxShadow(
+              color: Colors.black.withAlpha(15),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            )
+          ] : null,
+        ),
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      item['title'] ?? '',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textDark,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              item['description'] ?? 'Tidak ada deskripsi',
-              style: const TextStyle(
-                color: AppTheme.textDark,
-                height: 1.5,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.darkPastelGreen.withAlpha(30),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      item['category'] ?? '',
+                      style: const TextStyle(
+                        color: AppTheme.darkPastelGreen,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              maxLines: isStacked ? 2 : null,
-              overflow: isStacked ? TextOverflow.ellipsis : null,
-            ),
+              const SizedBox(height: 12),
+              Text(
+                item['description'] ?? 'Tidak ada deskripsi',
+                style: const TextStyle(
+                  color: AppTheme.textDark,
+                  height: 1.5,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

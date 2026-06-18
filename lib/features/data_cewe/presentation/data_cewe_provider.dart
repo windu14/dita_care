@@ -22,10 +22,10 @@ class DataCeweNotifier extends AsyncNotifier<List<Map<String, dynamic>>> {
     }
   }
 
-  Future<void> addData(String title, String description, String category) async {
+  Future<void> addData(String title, String description, String category, {String? imagePath, String? link}) async {
     try {
       final service = ref.read(dataCeweServiceProvider);
-      await service.addGirlData(title, description, category);
+      await service.addGirlData(title, description, category, imagePath: imagePath, link: link);
       // Invalidate the provider to trigger a rebuild and re-fetch
       ref.invalidateSelf();
     } catch (e) {
