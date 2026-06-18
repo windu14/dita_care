@@ -17,11 +17,12 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
-    
-    // Force compileSdk 36 for all plugins/subprojects
-    afterEvaluate {
-        project.extensions.findByType<com.android.build.gradle.BaseExtension>()?.let { ext ->
-            ext.compileSdkVersion(36)
+}
+
+subprojects {
+    pluginManager.withPlugin("com.android.library") {
+        extensions.findByType<com.android.build.gradle.LibraryExtension>()?.let { ext ->
+            ext.compileSdk = 36
         }
     }
 }
