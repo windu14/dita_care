@@ -40,6 +40,11 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Force compileSdkVersion 36
+        run: |
+          mkdir -p android
+          echo "flutter.compileSdkVersion=36" >> android/local.properties
+
       - name: Build APK (Release)
         run: flutter build apk --release
 
