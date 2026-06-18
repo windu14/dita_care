@@ -23,6 +23,16 @@ class ChatNotifier extends Notifier<List<ChatMessage>> {
 
   bool get isLoading => _isLoading;
 
+  void resetHistory() {
+    state = [
+      ChatMessage(
+        id: const Uuid().v4(),
+        text: 'Halo! Aku Dita, konsultan spesialismu. Ada yang mau kamu tanyakan tentang pasanganmu? Misalnya soal mood swing, cara mengartikan "terserah", atau jadwal PMS-nya?',
+        isUser: false,
+      )
+    ];
+  }
+
   Future<void> sendMessage(String text) async {
     if (text.trim().isEmpty) return;
 
@@ -53,6 +63,9 @@ class ChatNotifier extends Notifier<List<ChatMessage>> {
     history.removeLast();
 
     try {
+      // Fake analyzing delay 8 seconds
+      await Future.delayed(const Duration(seconds: 8));
+
       final reply = await ref.read(groqServiceProvider).sendMessage(text, history);
       final aiMsg = ChatMessage(
         id: const Uuid().v4(),
@@ -72,7 +85,7 @@ class ChatNotifier extends Notifier<List<ChatMessage>> {
     }
   }
 
-  Future<void> saveToArticle(String messageId) async {
+  Future<void> saveToArticle(String messageId, String title) async {
     final msgIndex = state.indexWhere((m) => m.id == messageId);
     if (msgIndex == -1) return;
 
@@ -80,7 +93,7 @@ class ChatNotifier extends Notifier<List<ChatMessage>> {
     if (msg.isSaved) return;
 
     try {
-      await ref.read(supabaseServiceProvider).saveArticle(msg.text);
+      await ref.read(supabaseServiceProvider).saveArticle(title, msg.text);
       
       // Update state to marked as saved
       state = [

@@ -23,23 +23,69 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Selamat datang di Dita Care',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppTheme.darkPastelPink,
-                      fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppTheme.darkPastelPink, // Solid flat color
+                  borderRadius: BorderRadius.circular(32), // M3 corner rounding
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.favorite, color: AppTheme.darkPastelPink, size: 24),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Halo, Bestie!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Panduan lengkap memahami sifat, karakter, dan kode dari dia.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.textLight,
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Butuh panduan \nmemahami si dia?',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                textAlign: TextAlign.center,
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Mulai dari menerjemahkan kata "terserah" sampai menghadapi mood swing.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 32),
+              
+              Text(
+                'Layanan Tersedia',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textDark,
+                    ),
+              ),
+              const SizedBox(height: 16),
               
               _buildCard(
                 context: context,
@@ -63,11 +109,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.pushNamed('chat'),
-        icon: const Icon(Icons.chat),
-        label: const Text('Mulai Chat'),
-      ),
     );
   }
 
@@ -81,47 +122,47 @@ class HomeScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+          color: color, // Solid flat background
+          borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.2),
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                color: Colors.white,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 32),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: color,
+                          color: Colors.white,
                         ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     description,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textDark,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.white,
                         ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios, color: color, size: 16),
+            const SizedBox(width: 12),
+            const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 24),
           ],
         ),
       ),

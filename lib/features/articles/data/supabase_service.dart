@@ -4,8 +4,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseService {
   final _client = Supabase.instance.client;
 
-  Future<void> saveArticle(String content) async {
+  Future<void> saveArticle(String title, String content) async {
     await _client.from('articles').insert({
+      'title': title,
       'content': content,
     });
   }
