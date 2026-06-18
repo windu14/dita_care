@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_theme.dart';
 
+import 'package:flutter/services.dart';
+
 class MainScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
@@ -19,8 +21,15 @@ class MainScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        body: navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _goBranch,
@@ -52,6 +61,7 @@ class MainScaffold extends StatelessWidget {
           ),
         ],
       ),
+    );
     );
   }
 }
