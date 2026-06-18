@@ -79,7 +79,7 @@ class HomeScreen extends StatelessWidget {
                         height: 1.5,
                       ),
                     ),
-                    const SizedBox(height: 48), // Create overlap gap
+                    const SizedBox(height: 24), // Create overlap gap
                     
                     // Hero Illustration
                     Container(

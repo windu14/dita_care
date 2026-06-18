@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,16 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
   String _searchQuery = '';
   String _selectedCategory = 'Semua';
   bool _isStackedExpanded = false;
+  
+  bool _isSearchLoading = false;
+  Timer? _searchTimer;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchTimer?.cancel();
+    super.dispose();
+  }
 
   final List<String> _categories = [
     'Semua',
@@ -32,24 +43,7 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dataList = ref.watch(dataCeweProvider);
-    
-    final filteredData = dataList.where((item) {
-      final title = (item['title'] ?? '').toString().toLowerCase();
-      final desc = (item['description'] ?? '').toString().toLowerCase();
-      final cat = (item['category'] ?? '');
-      
-      final matchesSearch = _searchQuery.isEmpty || 
-          title.contains(_searchQuery.toLowerCase()) || 
-          desc.contains(_searchQuery.toLowerCase());
-          
-      final matchesCategory = _selectedCategory == 'Semua' || cat == _selectedCategory;
-      
-      return matchesSearch && matchesCategory;
-    }).toList();
-
-    final isDefaultView = _searchQuery.isEmpty && _selectedCategory == 'Semua';
-    final latest4 = dataList.take(4).toList();
+    final asyncDataList = ref.watch(dataCeweProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
@@ -68,13 +62,22 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
                 hintText: 'Cari makanan, hobi, tempat...',
                 leading: const Icon(Icons.search, color: AppTheme.textLight),
                 elevation: const WidgetStatePropertyAll(0),
-                backgroundColor: WidgetStatePropertyAll(AppTheme.backgroundLight),
+                backgroundColor: const WidgetStatePropertyAll(AppTheme.backgroundLight),
                 shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
                 onChanged: (value) {
                   setState(() {
                     _searchQuery = value;
+                    _isSearchLoading = true;
+                  });
+                  _searchTimer?.cancel();
+                  _searchTimer = Timer(const Duration(seconds: 3), () {
+                    if (mounted) {
+                      setState(() {
+                        _isSearchLoading = false;
+                      });
+                    }
                   });
                 },
               ),
@@ -112,8 +115,16 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
                         onSelected: (bool selected) {
                           setState(() {
                             _selectedCategory = cat;
-                            // Reset expanded state if category changes
                             _isStackedExpanded = false;
+                            _isSearchLoading = true;
+                          });
+                          _searchTimer?.cancel();
+                          _searchTimer = Timer(const Duration(seconds: 3), () {
+                            if (mounted) {
+                              setState(() {
+                                _isSearchLoading = false;
+                              });
+                            }
                           });
                         },
                       ),
@@ -123,44 +134,62 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
               ),
             ),
           ),
-          
-          if (dataList.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: _buildEmptyState(),
-            )
-          else if (filteredData.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: _buildSearchEmptyState(),
-            )
-          else if (isDefaultView)
-            SliverToBoxAdapter(
-              child: AnimatedCrossFade(
-                firstChild: _buildStackedView(latest4),
-                secondChild: _buildExpandedStackedView(filteredData),
-                crossFadeState: _isStackedExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                duration: const Duration(milliseconds: 300),
-                firstCurve: Curves.easeOutCubic,
-                secondCurve: Curves.easeInCubic,
-                sizeCurve: Curves.easeInOut,
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: _buildDataCard(filteredData[index]),
-                    );
-                  },
-                  childCount: filteredData.length,
-                ),
-              ),
-            ),
+          asyncDataList.when(
+            loading: () => SliverFillRemaining(child: _buildShimmerLoading()),
+            error: (error, stack) => SliverFillRemaining(child: Center(child: Text('Error: $error'))),
+            data: (dataList) {
+              if (_isSearchLoading) {
+                return SliverFillRemaining(child: _buildShimmerLoading());
+              }
+
+              final filteredData = dataList.where((item) {
+                final title = (item['title'] ?? '').toString().toLowerCase();
+                final desc = (item['description'] ?? '').toString().toLowerCase();
+                final cat = (item['category'] ?? '');
+                
+                final matchesSearch = _searchQuery.isEmpty || 
+                    title.contains(_searchQuery.toLowerCase()) || 
+                    desc.contains(_searchQuery.toLowerCase());
+                    
+                final matchesCategory = _selectedCategory == 'Semua' || cat == _selectedCategory;
+                
+                return matchesSearch && matchesCategory;
+              }).toList();
+
+              final isDefaultView = _searchQuery.isEmpty && _selectedCategory == 'Semua';
+
+              if (dataList.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _buildEmptyState(),
+                );
+              } else if (filteredData.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _buildSearchEmptyState(),
+                );
+              } else if (isDefaultView) {
+                return SliverToBoxAdapter(
+                  child: _buildAnimatedStack(filteredData),
+                );
+              } else {
+                return SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: _buildDataCard(filteredData[index]),
+                        );
+                      },
+                      childCount: filteredData.length,
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -173,18 +202,89 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
     );
   }
 
-  Widget _buildStackedView(List<Map<String, dynamic>> latest4) {
+  Widget _buildShimmerLoading() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          height: 160,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 150,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withAlpha(50),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  Container(
+                    width: 60,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: AppTheme.darkPastelGreen.withAlpha(30),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withAlpha(50),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: 200,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withAlpha(50),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAnimatedStack(List<Map<String, dynamic>> items) {
+    const double cardHeight = 160.0;
+    const double expandedSpacing = 16.0;
+    const double headerHeight = 60.0;
+    
+    // Calculate total height needed for the stack container
+    final double stackedHeight = 260.0;
+    final double expandedHeight = headerHeight + (items.length * (cardHeight + expandedSpacing));
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Baru Saja Disimpan',
-                style: TextStyle(
+              Text(
+                _isStackedExpanded ? 'Semua Catatan' : 'Baru Saja Disimpan',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.textDark,
@@ -193,15 +293,19 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    _isStackedExpanded = true;
+                    _isStackedExpanded = !_isStackedExpanded;
                   });
                 },
-                child: const Text(
-                  'Lihat Semua',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.darkPastelPink,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: Text(
+                    _isStackedExpanded ? 'Tumpuk Kembali' : 'Lihat Semua',
+                    key: ValueKey(_isStackedExpanded),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.darkPastelPink,
+                    ),
                   ),
                 ),
               )
@@ -210,28 +314,52 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
         ),
         GestureDetector(
           onTap: () {
-            setState(() {
-              _isStackedExpanded = true;
-            });
+            if (!_isStackedExpanded) {
+              setState(() {
+                _isStackedExpanded = true;
+              });
+            }
           },
-          child: SizedBox(
-            height: 260, // Fixed height for stacked area
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOutExpo,
+            height: _isStackedExpanded ? expandedHeight : stackedHeight,
             child: Stack(
               alignment: Alignment.topCenter,
-              children: List.generate(latest4.length, (index) {
-                // Inverse index so newest (index 0) is drawn last and stays on top
-                final itemIndex = latest4.length - 1 - index;
-                final item = latest4[itemIndex];
+              clipBehavior: Clip.none,
+              children: List.generate(items.length, (i) {
+                // Reverse index so 0 (newest) is drawn last and sits on top
+                final index = items.length - 1 - i;
+                final item = items[index];
+                
+                final bool isVisibleWhenStacked = index < 4;
+                
+                // Stacked layout calculations
+                final double stackedTop = isVisibleWhenStacked ? index * 20.0 : 0.0;
+                final double stackedLeftRight = 24.0 + (isVisibleWhenStacked ? index * 12.0 : 48.0);
+                final double stackedOpacity = isVisibleWhenStacked ? 1.0 : 0.0;
+                
+                // Expanded layout calculations
+                final double expandedTop = index * (cardHeight + expandedSpacing);
+                final double expandedLeftRight = 16.0;
                 
                 return AnimatedPositioned(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOutCubic,
-                  top: itemIndex * 20.0,
-                  left: 24.0 + (itemIndex * 12.0),
-                  right: 24.0 + (itemIndex * 12.0),
-                  child: IgnorePointer(
-                    ignoring: itemIndex != 0, // Only top card is interactive
-                    child: _buildDataCard(item, isStacked: true),
+                  key: ValueKey(item['id'] ?? index),
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeOutExpo,
+                  top: _isStackedExpanded ? expandedTop : stackedTop,
+                  left: _isStackedExpanded ? expandedLeftRight : stackedLeftRight,
+                  right: _isStackedExpanded ? expandedLeftRight : stackedLeftRight,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 400),
+                    opacity: _isStackedExpanded ? 1.0 : stackedOpacity,
+                    child: IgnorePointer(
+                      ignoring: !_isStackedExpanded && index != 0,
+                      child: SizedBox(
+                        height: cardHeight,
+                        child: _buildDataCard(item, isStacked: !_isStackedExpanded),
+                      ),
+                    ),
                   ),
                 );
               }),
@@ -239,49 +367,6 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildExpandedStackedView(List<Map<String, dynamic>> items) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 24, 8, 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Semua Catatan',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      _isStackedExpanded = false;
-                    });
-                  },
-                  icon: const Icon(Icons.layers_clear, size: 16),
-                  label: const Text('Tumpuk Kembali'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.darkPastelPink,
-                  ),
-                )
-              ],
-            ),
-          ),
-          ...items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: _buildDataCard(item),
-              )),
-        ],
-      ),
     );
   }
 
@@ -371,6 +456,7 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
 
   Widget _buildDataCard(Map<String, dynamic> item, {bool isStacked = false}) {
     return Container(
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -383,7 +469,8 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
           )
         ] : null,
       ),
-      child: Padding(
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

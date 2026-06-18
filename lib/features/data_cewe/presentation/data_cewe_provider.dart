@@ -2,26 +2,23 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/data_cewe_service.dart';
 
-class DataCeweNotifier extends Notifier<List<Map<String, dynamic>>> {
-  bool isLoading = false;
-
+class DataCeweNotifier extends AsyncNotifier<List<Map<String, dynamic>>> {
   @override
-  List<Map<String, dynamic>> build() {
-    // Initial fetch
-    Future.microtask(() => fetchData());
-    return [];
+  Future<List<Map<String, dynamic>>> build() async {
+    return _fetchData();
   }
 
-  Future<void> fetchData() async {
-    isLoading = true;
+  Future<List<Map<String, dynamic>>> _fetchData() async {
     try {
+      // Simulate 3 seconds shimmer loading delay for native feel
+      await Future.delayed(const Duration(seconds: 3));
+      
       final service = ref.read(dataCeweServiceProvider);
       final data = await service.fetchGirlData();
-      state = data;
+      return data;
     } catch (e) {
       debugPrint('Error fetching girl data: $e');
-    } finally {
-      isLoading = false;
+      rethrow;
     }
   }
 
@@ -29,7 +26,8 @@ class DataCeweNotifier extends Notifier<List<Map<String, dynamic>>> {
     try {
       final service = ref.read(dataCeweServiceProvider);
       await service.addGirlData(title, description, category);
-      await fetchData(); // Refresh list
+      // Invalidate the provider to trigger a rebuild and re-fetch
+      ref.invalidateSelf();
     } catch (e) {
       debugPrint('Error adding girl data: $e');
       rethrow;
@@ -37,6 +35,6 @@ class DataCeweNotifier extends Notifier<List<Map<String, dynamic>>> {
   }
 }
 
-final dataCeweProvider = NotifierProvider<DataCeweNotifier, List<Map<String, dynamic>>>(() {
+final dataCeweProvider = AsyncNotifierProvider<DataCeweNotifier, List<Map<String, dynamic>>>(() {
   return DataCeweNotifier();
 });
