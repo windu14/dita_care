@@ -94,7 +94,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isUser ? AppTheme.darkPastelPink : Colors.white,
+                color: isUser ? AppTheme.darkPastelGreen : Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(20),
                   topRight: const Radius.circular(20),
@@ -106,19 +106,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: isUser
                   ? Text(
                       message.text,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                     )
                   : MarkdownBody(
                       data: message.text,
                       styleSheet: MarkdownStyleSheet(
-                        p: TextStyle(color: AppTheme.textDark, height: 1.5),
-                        strong: TextStyle(color: AppTheme.textDark, fontWeight: FontWeight.bold),
-                        em: TextStyle(color: AppTheme.textDark, fontStyle: FontStyle.italic),
+                        p: const TextStyle(color: AppTheme.textDark, fontSize: 16, height: 1.5),
+                        strong: const TextStyle(color: AppTheme.textDark, fontWeight: FontWeight.bold),
+                        em: const TextStyle(color: AppTheme.textDark, fontStyle: FontStyle.italic),
+                        listBullet: const TextStyle(color: AppTheme.darkPastelPink),
                       ),
                     ),
             ),
             if (!isUser) ...[
               const SizedBox(height: 4),
+              const Padding(
+                padding: EdgeInsets.only(left: 4.0),
+                child: Text(
+                  'Analisis psikologi AI bisa saja tidak akurat, komunikasikan juga dengan pasangan.',
+                  style: TextStyle(
+                    color: AppTheme.textLight,
+                    fontSize: 10,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (!isUser)
               InkWell(
                 onTap: message.isSaved ? null : () async {
                   final titleController = TextEditingController();
@@ -205,7 +220,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ),
               ),
-            ]
           ],
         ),
       ),

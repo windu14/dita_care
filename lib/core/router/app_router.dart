@@ -5,13 +5,20 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/chat/presentation/chat_screen.dart';
 import '../../features/articles/presentation/articles_screen.dart';
 import '../../features/articles/presentation/article_detail_screen.dart';
+import '../../features/data_cewe/presentation/data_cewe_screen.dart';
+import '../../features/data_cewe/presentation/form_data_cewe_screen.dart';
 
 import '../presentation/main_scaffold.dart';
+import '../presentation/splash_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/splash',
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return MainScaffold(navigationShell: navigationShell);
@@ -48,6 +55,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                       final article = state.extra as Map<String, dynamic>;
                       return ArticleDetailScreen(article: article);
                     },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/data-cewe',
+                name: 'data-cewe',
+                builder: (context, state) => const DataCeweScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'form',
+                    builder: (context, state) => const FormDataCeweScreen(),
                   ),
                 ],
               ),

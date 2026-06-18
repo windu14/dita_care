@@ -25,6 +25,9 @@ class MainScaffold extends StatelessWidget {
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _goBranch,
         backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.transparent,
         indicatorColor: AppTheme.darkPastelPink.withAlpha(50),
         destinations: const [
           NavigationDestination(
@@ -41,6 +44,11 @@ class MainScaffold extends StatelessWidget {
             icon: Icon(Icons.article_outlined),
             selectedIcon: Icon(Icons.article, color: AppTheme.darkPastelPink),
             label: 'Artikel',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_outline),
+            selectedIcon: Icon(Icons.favorite, color: AppTheme.darkPastelPink),
+            label: 'Data Si Dia',
           ),
         ],
       ),

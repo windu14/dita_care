@@ -225,15 +225,27 @@ class _ArticlesScreenState extends ConsumerState<ArticlesScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            _buildKeywordPill('Mood Swing'),
-            _buildKeywordPill('Terserah'),
-            _buildKeywordPill('Minta Maaf'),
-            _buildKeywordPill('Komunikasi'),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _buildKeywordPill('Mood Swing'),
+              const SizedBox(width: 8),
+              _buildKeywordPill('Terserah'),
+              const SizedBox(width: 8),
+              _buildKeywordPill('Minta Maaf'),
+              const SizedBox(width: 8),
+              _buildKeywordPill('Komunikasi'),
+              const SizedBox(width: 8),
+              _buildKeywordPill('Hadiah/Gift'),
+              const SizedBox(width: 8),
+              _buildKeywordPill('Jadwal PMS'),
+              const SizedBox(width: 8),
+              _buildKeywordPill('Kode Cewe'),
+              const SizedBox(width: 8),
+              _buildKeywordPill('Kepribadian'),
+            ],
+          ),
         ),
         const SizedBox(height: 32),
         const Text(
