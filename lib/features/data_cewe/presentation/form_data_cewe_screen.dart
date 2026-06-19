@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dotted_border/dotted_border.dart';
 import '../../../core/theme/app_theme.dart';
 import 'data_cewe_provider.dart';
 
@@ -157,35 +158,39 @@ class _FormDataCeweScreenState extends ConsumerState<FormDataCeweScreen> {
               const SizedBox(height: 16),
               GestureDetector(
                 onTap: _pickImage,
-                child: Container(
-                  height: 150,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppTheme.darkPastelGreen.withAlpha(100),
-                      style: BorderStyle.solid,
-                      width: 2,
-                    ),
+                child: DottedBorder(
+                  options: RoundedRectDottedBorderOptions(
+                    radius: const Radius.circular(16),
+                    color: AppTheme.darkPastelGreen.withAlpha(150),
+                    strokeWidth: 2,
+                    dashPattern: const [8, 4],
+                    padding: EdgeInsets.zero,
                   ),
-                  child: _selectedImagePath != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: Image.file(
-                            File(_selectedImagePath!),
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppTheme.darkPastelGreen.withAlpha(10),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: _selectedImagePath != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Image.file(
+                              File(_selectedImagePath!),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          )
+                        : const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_photo_alternate_outlined, size: 40, color: AppTheme.darkPastelGreen),
+                              SizedBox(height: 8),
+                              Text('Tambah Gambar (Opsional)', style: TextStyle(color: AppTheme.darkPastelGreen, fontWeight: FontWeight.bold)),
+                            ],
                           ),
-                        )
-                      : const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add_photo_alternate_outlined, size: 40, color: AppTheme.textLight),
-                            SizedBox(height: 8),
-                            Text('Tambah Gambar (Opsional)', style: TextStyle(color: AppTheme.textLight)),
-                          ],
-                        ),
+                  ),
                 ),
               ),
               

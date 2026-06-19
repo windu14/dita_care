@@ -27,8 +27,8 @@ class DataCeweService {
       'title': title,
       'description': description,
       'category': category,
-      if (imageUrl != null) 'image_url': imageUrl,
-      if (link?.isNotEmpty == true) 'link': link,
+      'image_url': imageUrl,
+      'link': link,
     });
   }
 }

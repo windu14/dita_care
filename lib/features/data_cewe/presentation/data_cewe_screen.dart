@@ -170,8 +170,30 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
                   child: _buildSearchEmptyState(),
                 );
               } else if (isDefaultView) {
-                return SliverToBoxAdapter(
-                  child: _buildAnimatedStack(filteredData),
+                final latestItems = filteredData.take(4).toList();
+                final olderItems = filteredData.skip(4).toList();
+
+                return SliverMainAxisGroup(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: _buildAnimatedStack(latestItems),
+                    ),
+                    if (olderItems.isNotEmpty)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0),
+                                child: _buildDataCard(olderItems[index]),
+                              );
+                            },
+                            childCount: olderItems.length,
+                          ),
+                        ),
+                      ),
+                  ],
                 );
               } else {
                 return SliverPadding(

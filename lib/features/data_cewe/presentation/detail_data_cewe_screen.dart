@@ -21,106 +21,139 @@ class DetailDataCeweScreen extends StatelessWidget {
     final category = item['category'] ?? 'Lainnya';
     final imageUrl = item['image_url'];
     final link = item['link'];
+    final bool hasImage = imageUrl != null && imageUrl.toString().isNotEmpty;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
-      appBar: AppBar(
-        title: const Text('Detail Data'),
-        backgroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (imageUrl != null && imageUrl.toString().isNotEmpty)
-              Image.network(
-                imageUrl,
-                height: 250,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    height: 250,
-                    color: Colors.grey[200],
-                    child: const Center(child: CircularProgressIndicator(color: AppTheme.darkPastelPink)),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 250,
-                  color: Colors.grey[200],
-                  child: const Center(child: Icon(Icons.broken_image, size: 50, color: Colors.grey)),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.large(
+            expandedHeight: hasImage ? 300.0 : null,
+            pinned: true,
+            backgroundColor: AppTheme.backgroundLight,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
+              title: Text(
+                title,
+                style: const TextStyle(
+                  color: AppTheme.textDark,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(24.0),
+              background: hasImage
+                  ? Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: Colors.grey[200],
+                              child: const Center(child: CircularProgressIndicator(color: AppTheme.darkPastelPink)),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey[200],
+                            child: const Center(child: Icon(Icons.broken_image, size: 50, color: Colors.grey)),
+                          ),
+                        ),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, AppTheme.backgroundLight],
+                              stops: [0.6, 1.0],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : null,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.darkPastelGreen.withAlpha(30),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      category,
-                      style: const TextStyle(
-                        color: AppTheme.darkPastelGreen,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textDark,
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.darkPastelGreen.withAlpha(30),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Deskripsi',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.textDark,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    desc,
-                    style: const TextStyle(
-                      color: AppTheme.textDark,
-                      height: 1.6,
-                      fontSize: 15,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  if (link != null && link.toString().isNotEmpty)
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppTheme.darkPastelPink,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                        child: Text(
+                          category,
+                          style: const TextStyle(
+                            color: AppTheme.darkPastelGreen,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () => _launchUrl(link),
-                        icon: const Icon(Icons.open_in_browser),
-                        label: const Text('Buka Tautan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.notes_rounded, color: AppTheme.darkPastelPink, size: 24),
+                              SizedBox(width: 8),
+                              Text(
+                                'Catatan Detail',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.textDark,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            desc,
+                            style: const TextStyle(
+                              color: AppTheme.textDark,
+                              height: 1.6,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: (link != null && link.toString().isNotEmpty)
+          ? FloatingActionButton.extended(
+              onPressed: () => _launchUrl(link),
+              backgroundColor: AppTheme.darkPastelPink,
+              elevation: 4,
+              icon: const Icon(Icons.open_in_browser, color: Colors.white),
+              label: const Text('Buka Tautan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            )
+          : null,
     );
   }
 }
