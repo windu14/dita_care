@@ -32,54 +32,46 @@ class DetailDataCeweScreen extends StatelessWidget {
             pinned: true,
             backgroundColor: AppTheme.backgroundLight,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
-              title: Text(
-                title,
-                style: const TextStyle(
-                  color: AppTheme.textDark,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              titlePadding: EdgeInsets.zero,
+              title: const SizedBox.shrink(),
               background: hasImage
-                  ? Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              color: Colors.grey[200],
-                              child: const Center(child: CircularProgressIndicator(color: AppTheme.darkPastelPink)),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) => Container(
+                  ? ClipRRect(
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
                             color: Colors.grey[200],
-                            child: const Center(child: Icon(Icons.broken_image, size: 50, color: Colors.grey)),
-                          ),
+                            child: const Center(child: CircularProgressIndicator(color: AppTheme.darkPastelPink)),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: Colors.grey[200],
+                          child: const Center(child: Icon(Icons.broken_image, size: 50, color: Colors.grey)),
                         ),
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, AppTheme.backgroundLight],
-                              stops: [0.6, 1.0],
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     )
                   : null,
             ),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 100),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.textDark,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       Container(

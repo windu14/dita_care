@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 16),
                         const Text(
-                          'Halo, Bestie!',
+                          'Halo Bro!',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     const Text(
-                      'Butuh panduan\nmemahami si dia?',
+                      'Bingung ngadepin\nsi cewek?',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 32,
@@ -72,7 +72,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'Mulai dari menerjemahkan kata "terserah"\nsampai menghadapi mood swing.',
+                      'Nggak usah pusing, simpen contekan dan\nrahasianya di sini biar gampang dicari.',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,
@@ -104,8 +104,8 @@ class HomeScreen extends StatelessWidget {
                     
                     _buildCard(
                       context: context,
-                      title: 'Konsultasi AI',
-                      description: 'Tanya seputar mood swing, kode rahasia, sampai jadwal PMS.',
+                      title: 'Tanya AI (Chat)',
+                      description: 'Tinggal chat aja kalau bingung baca kode keras dari dia.',
                       icon: Icons.chat_bubble_outline,
                       color: AppTheme.darkPastelPink,
                       onTap: () => context.pushNamed('chat'),
@@ -115,8 +115,8 @@ class HomeScreen extends StatelessWidget {
                     
                     _buildCard(
                       context: context,
-                      title: 'Artikel & Catatan',
-                      description: 'Kumpulan jawaban dan tips terbaik dari konsultasi sebelumnya.',
+                      title: 'Catatan & Contekan',
+                      description: 'Simpenan pelajaran dan tips biar nggak salah langkah lagi.',
                       icon: Icons.bookmarks_outlined,
                       color: AppTheme.darkPastelGreen,
                       onTap: () => context.pushNamed('articles'),

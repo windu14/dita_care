@@ -18,6 +18,7 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
   String _searchQuery = '';
   String _selectedCategory = 'Semua';
   bool _isStackedExpanded = false;
+  int _displayCount = 5;
   
   bool _isSearchLoading = false;
   Timer? _searchTimer;
@@ -70,6 +71,7 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
                 onChanged: (value) {
                   setState(() {
                     _searchQuery = value;
+                    _displayCount = 5;
                     _isSearchLoading = true;
                   });
                   _searchTimer?.cancel();
@@ -116,6 +118,7 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
                         onSelected: (bool selected) {
                           setState(() {
                             _selectedCategory = cat;
+                            _displayCount = 5;
                             _isStackedExpanded = false;
                             _isSearchLoading = true;
                           });
@@ -172,41 +175,77 @@ class _DataCeweScreenState extends ConsumerState<DataCeweScreen> {
               } else if (isDefaultView) {
                 final latestItems = filteredData.take(4).toList();
                 final olderItems = filteredData.skip(4).toList();
+                
+                final paginatedOlderItems = olderItems.take(_displayCount).toList();
+                final hasMore = olderItems.length > _displayCount;
 
                 return SliverMainAxisGroup(
                   slivers: [
                     SliverToBoxAdapter(
                       child: _buildAnimatedStack(latestItems),
                     ),
-                    if (olderItems.isNotEmpty)
+                    if (paginatedOlderItems.isNotEmpty)
                       SliverPadding(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
+                              if (index == paginatedOlderItems.length) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
+                                  child: Center(
+                                    child: FilledButton.tonal(
+                                      onPressed: () {
+                                        setState(() {
+                                          _displayCount += 5;
+                                        });
+                                      },
+                                      child: const Text('Tampilkan Lebih Banyak'),
+                                    ),
+                                  ),
+                                );
+                              }
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 16.0),
-                                child: _buildDataCard(olderItems[index]),
+                                child: _buildDataCard(paginatedOlderItems[index]),
                               );
                             },
-                            childCount: olderItems.length,
+                            childCount: paginatedOlderItems.length + (hasMore ? 1 : 0),
                           ),
                         ),
                       ),
                   ],
                 );
               } else {
+                final paginatedFilteredData = filteredData.take(_displayCount).toList();
+                final hasMore = filteredData.length > _displayCount;
+
                 return SliverPadding(
                   padding: const EdgeInsets.all(16),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
+                        if (index == paginatedFilteredData.length) {
+                           return Padding(
+                             padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
+                             child: Center(
+                               child: FilledButton.tonal(
+                                 onPressed: () {
+                                   setState(() {
+                                     _displayCount += 5;
+                                   });
+                                 },
+                                 child: const Text('Tampilkan Lebih Banyak'),
+                               ),
+                             ),
+                           );
+                        }
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
-                          child: _buildDataCard(filteredData[index]),
+                          child: _buildDataCard(paginatedFilteredData[index]),
                         );
                       },
-                      childCount: filteredData.length,
+                      childCount: paginatedFilteredData.length + (hasMore ? 1 : 0),
                     ),
                   ),
                 );
