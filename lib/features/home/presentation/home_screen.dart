@@ -79,25 +79,29 @@ class HomeScreen extends StatelessWidget {
                         height: 1.5,
                       ),
                     ),
-                    const SizedBox(height: 24), // Create overlap gap
+                    const SizedBox(height: 8), // Move closer to top texts
                     
                     // Hero Illustration
-                    Container(
-                      height: 180,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/hero_illustration.png'),
-                          fit: BoxFit.cover,
-                          alignment: Alignment.bottomCenter,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(20),
-                            blurRadius: 24,
-                            offset: const Offset(0, 8),
+                    Transform.translate(
+                      offset: const Offset(0, -16), // Slightly touching the 'app bar' elements
+                      child: Container(
+                        height: 200, // Taller hero illustration to emphasize the artwork
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images/hero_illustration.png'),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.bottomCenter,
                           ),
-                        ],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(60),
+                              blurRadius: 32,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 16), // Aesthetic shadow
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -153,9 +157,10 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(20),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
+              color: Colors.black.withAlpha(40),
+              blurRadius: 28,
+              spreadRadius: 2,
+              offset: const Offset(0, 12),
             ),
           ],
         ),
